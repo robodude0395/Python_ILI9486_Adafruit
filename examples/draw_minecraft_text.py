@@ -51,7 +51,7 @@ draw = disp.draw()
 
 
 # Alternatively load a TTF font.
-font = ImageFont.truetype('monocraft.ttf', 40)
+font = ImageFont.truetype('monocraft.ttf', 25)
 
 # Define a function to create rotated text.  Unfortunately PIL doesn't have good
 # native support for rotated fonts, but this function can be used to make a
@@ -90,7 +90,7 @@ def draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255)):
 
 
 # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
-draw_rotated_text(disp.buffer, 'Happy New Year!', (0, 0), 0, font, fill=(255,255,255))
+draw_rotated_text(disp.buffer, 'This is minecraft!', (0, 0), 0, font, fill=(255,255,255))
 
 # Write buffer to display hardware, must be called to make things visible on the
 # display!

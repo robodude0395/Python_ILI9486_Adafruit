@@ -51,29 +51,42 @@ draw = disp.draw()
 
 
 # Alternatively load a TTF font.
-# Some other nice fonts to try: http://www.dafont.com/bitmap.php
-font = ImageFont.truetype('monocraft.ttf', 100)
+font = ImageFont.truetype('monocraft.ttf', 40)
 
 # Define a function to create rotated text.  Unfortunately PIL doesn't have good
 # native support for rotated fonts, but this function can be used to make a
 # text image and rotate it so it's easy to paste in the buffer.
 def draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255)):
-    # Create a temporary draw context
+    """
+    Draw rotated text onto an image without clipping descenders.
+    Handles all fonts and rotations cleanly.
+    """
+    # Create a temporary draw object
     draw = ImageDraw.Draw(image)
 
-    # Get text bounding box (Pillow 10+)
+    # Get text bounding box with offsets
     bbox = draw.textbbox((0, 0), text, font=font)
     width = bbox[2] - bbox[0]
     height = bbox[3] - bbox[1]
 
-    # Create an RGBA image for the text
-    textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-    textdraw = ImageDraw.Draw(textimage)
-    textdraw.text((0, 0), text, font=font, fill=fill)
+    # Add padding to prevent clipping of descenders/ascenders
+    pad_x, pad_y = 4, 6
+    text_w = width + pad_x * 2
+    text_h = height + pad_y * 2
 
-    # Rotate and paste
-    rotated = textimage.rotate(angle, expand=True)
+    # Create transparent RGBA image for text
+    text_img = Image.new("RGBA", (text_w, text_h), (0, 0, 0, 0))
+    text_draw = ImageDraw.Draw(text_img)
+
+    # Draw text centered with padding
+    text_draw.text((pad_x - bbox[0], pad_y - bbox[1]), text, font=font, fill=fill)
+
+    # Rotate text
+    rotated = text_img.rotate(angle, expand=True)
+
+    # Paste into main image (mask keeps transparency)
     image.paste(rotated, position, rotated)
+
 
 
 # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.

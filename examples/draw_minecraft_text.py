@@ -33,6 +33,9 @@ RST = 25
 SPI_PORT = 0
 SPI_DEVICE = 0
 
+#Screen config
+MAX_CHAR_COUNT_PORTRAIT = 18
+
 # Create TFT LCD display class.
 disp = TFT.ILI9486(DC, rst=RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=64000000))
 
@@ -93,7 +96,7 @@ i = 0
 while True:
     disp.clear((0, 0, 0))
     # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
-    draw_rotated_text(disp.buffer, f'{"A"*12} {i}!', (0, 0), 0, font, fill=(255,255,255))
+    draw_rotated_text(disp.buffer, f'{"A"*MAX_CHAR_COUNT_PORTRAIT} {i}!', (0, 0), 0, font, fill=(255,255,255))
     i+=1
     # Write buffer to display hardware, must be called to make things visible on the
     # display!

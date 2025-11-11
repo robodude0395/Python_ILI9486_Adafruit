@@ -1,0 +1,84 @@
+# -*- coding:utf-8 -*-
+# Copyright (c) 2016 Myway Freework
+# Author: Myway
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+from PIL import Image, ImageDraw, ImageFont
+
+import Python_ILI9486 as TFT
+import Adafruit_GPIO as GPIO
+import Adafruit_GPIO.SPI as SPI
+
+
+# Raspberry Pi configuration.
+DC = 24
+RST = 25
+SPI_PORT = 0
+SPI_DEVICE = 0
+
+# Create TFT LCD display class.
+disp = TFT.ILI9486(DC, rst=RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=64000000))
+
+# Initialize display.
+disp.begin()
+
+# Clear the display to a red background.
+# Can pass any tuple of red, green, blue values (from 0 to 255 each).
+disp.clear((0, 0, 0))
+
+# Alternatively can clear to a black screen by calling:
+# disp.clear()
+
+# Get a PIL Draw object to start drawing on the display buffer.
+draw = disp.draw()
+
+
+
+# Alternatively load a TTF font.
+# Some other nice fonts to try: http://www.dafont.com/bitmap.php
+font = ImageFont.truetype('monocraft.ttf', 100)
+
+# Define a function to create rotated text.  Unfortunately PIL doesn't have good
+# native support for rotated fonts, but this function can be used to make a
+# text image and rotate it so it's easy to paste in the buffer.
+def draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255)):
+    # Create a temporary draw context
+    draw = ImageDraw.Draw(image)
+
+    # Get text bounding box (Pillow 10+)
+    bbox = draw.textbbox((0, 0), text, font=font)
+    width = bbox[2] - bbox[0]
+    height = bbox[3] - bbox[1]
+
+    # Create an RGBA image for the text
+    textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    textdraw = ImageDraw.Draw(textimage)
+    textdraw.text((0, 0), text, font=font, fill=fill)
+
+    # Rotate and paste
+    rotated = textimage.rotate(angle, expand=True)
+    image.paste(rotated, position, rotated)
+
+
+# Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
+draw_rotated_text(disp.buffer, 'Happy New Year!', (0, 0), 0, font, fill=(255,255,255))
+
+# Write buffer to display hardware, must be called to make things visible on the
+# display!
+disp.display()

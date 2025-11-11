@@ -25,6 +25,7 @@ import Python_ILI9486 as TFT
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 
+import time
 
 # Raspberry Pi configuration.
 DC = 24
@@ -89,8 +90,11 @@ def draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255)):
 
 
 
-# Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
-draw_rotated_text(disp.buffer, 'This is minecraft!', (0, 0), 0, font, fill=(255,255,255))
+while True:
+    # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
+    draw_rotated_text(disp.buffer, f'This is minecraft {i}!', (0, 0), 0, font, fill=(255,255,255))
+    time.sleep(1/60)
+    disp.clear((0, 0, 0))
 
 # Write buffer to display hardware, must be called to make things visible on the
 # display!

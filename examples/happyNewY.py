@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*- 
+# -*- coding:utf-8 -*-
 # Copyright (c) 2016 Myway Freework
 # Author: Myway
 #
@@ -72,21 +72,26 @@ fontEn = ImageFont.truetype('ca.ttf', 40)
 fontN = ImageFont.truetype('miniN.ttf', 40)
 
 # Define a function to create rotated text.  Unfortunately PIL doesn't have good
-# native support for rotated fonts, but this function can be used to make a 
+# native support for rotated fonts, but this function can be used to make a
 # text image and rotate it so it's easy to paste in the buffer.
-def draw_rotated_text(image, text, position, angle, font, fill=(255,255,255)):
-	# Get rendered font width and height.
-	draw = ImageDraw.Draw(image)
-	width, height = draw.textsize(text, font=font)
-	# Create a new image with transparent background to store the text.
-	textimage = Image.new('RGBA', (width, height), (0,0,0,0))
-	# Render the text.
-	textdraw = ImageDraw.Draw(textimage)
-	textdraw.text((0,0), text, font=font, fill=fill)
-	# Rotate the text image.
-	rotated = textimage.rotate(angle, expand=1)
-	# Paste the text into the image, using it as a mask for transparency.
-	image.paste(rotated, position, rotated)
+def draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255)):
+    # Create a temporary draw context
+    draw = ImageDraw.Draw(image)
+
+    # Get text bounding box (Pillow 10+)
+    bbox = draw.textbbox((0, 0), text, font=font)
+    width = bbox[2] - bbox[0]
+    height = bbox[3] - bbox[1]
+
+    # Create an RGBA image for the text
+    textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    textdraw = ImageDraw.Draw(textimage)
+    textdraw.text((0, 0), text, font=font, fill=fill)
+
+    # Rotate and paste
+    rotated = textimage.rotate(angle, expand=True)
+    image.paste(rotated, position, rotated)
+
 
 # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
 draw_rotated_text(disp.buffer, 'Happy New Year!', (160, 40), 90, fontEn, fill=(255,255,255))

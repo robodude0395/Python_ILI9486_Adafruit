@@ -89,7 +89,7 @@ def draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255)):
     image.paste(rotated, position, rotated)
 
 
-
+i = 0
 while True:
     # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
     draw_rotated_text(disp.buffer, f'This is minecraft {i}!', (0, 0), 0, font, fill=(255,255,255))

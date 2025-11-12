@@ -34,28 +34,34 @@ SPI_PORT = 0
 SPI_DEVICE = 0
 
 #Screen config
-MAX_CHAR_COUNT_PORTRAIT = 18
+MAX_CHAR_WIDTH = 18
+MAX_CHAR_HEIGHT = 25
 
 # Create TFT LCD display class.
 disp = TFT.ILI9486(DC, rst=RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=64000000))
 
-# Initialize display.
+# Initialize display
 disp.begin()
-
-# Clear the display to a red background.
-# Can pass any tuple of red, green, blue values (from 0 to 255 each).
 disp.clear((0, 0, 0))
 
-# Alternatively can clear to a black screen by calling:
-# disp.clear()
+# Get screen dimensions (portrait mode)
+SCREEN_WIDTH, SCREEN_HEIGHT = disp.width, disp.height
 
-# Get a PIL Draw object to start drawing on the display buffer.
-draw = disp.draw()
-
-
-
-# Alternatively load a TTF font.
+# Load your font
 font = ImageFont.truetype('monocraft.ttf', 25)
+
+# Measure the widest character (usually “W”)
+tmp_img = Image.new("RGB", (100, 100))
+tmp_draw = ImageDraw.Draw(tmp_img)
+bbox = tmp_draw.textbbox((0, 0), "W", font=font)
+char_width = bbox[2] - bbox[0]
+char_height = bbox[3] - bbox[1]
+
+# Compute how many fit
+MAX_CHAR_WIDTH = SCREEN_WIDTH // char_width
+MAX_CHAR_HEIGHT = SCREEN_HEIGHT // char_height
+
+print(f"Max chars per line: {MAX_CHAR_WIDTH}, lines per screen: {MAX_CHAR_HEIGHT}")
 
 # Define a function to create rotated text.  Unfortunately PIL doesn't have good
 # native support for rotated fonts, but this function can be used to make a
@@ -96,7 +102,7 @@ i = 0
 while True:
     disp.clear((0, 0, 0))
     # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
-    draw_rotated_text(disp.buffer, f'{"A"*MAX_CHAR_COUNT_PORTRAIT} {i}!', (0, 0), 0, font, fill=(255,255,255))
+    draw_rotated_text(disp.buffer, f'{"".join(["A"*MAX_CHAR_WIDTH]*MAX_CHAR_HEIGHT)} {i}!', (0, 0), 0, font, fill=(255,255,255))
     i+=1
     # Write buffer to display hardware, must be called to make things visible on the
     # display!

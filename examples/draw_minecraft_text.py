@@ -48,18 +48,18 @@ disp.clear((0, 0, 0))
 SCREEN_WIDTH, SCREEN_HEIGHT = disp.width, disp.height
 
 # Load your font
-font = ImageFont.truetype('monocraft.ttf', 25)
+font = ImageFont.truetype('monocraft.ttf', 18)
 
 # Measure the widest character (usually “W”)
 tmp_img = Image.new("RGB", (100, 100))
 tmp_draw = ImageDraw.Draw(tmp_img)
 bbox = tmp_draw.textbbox((0, 0), "W", font=font)
 char_width = (bbox[2] - bbox[0])
-char_height = (bbox[3] - bbox[1]) + 6
+char_height = bbox[3] - bbox[1]
 
 # Compute how many fit
 MAX_CHAR_WIDTH = SCREEN_WIDTH // char_width
-MAX_CHAR_HEIGHT = (SCREEN_HEIGHT // char_height)-1
+MAX_CHAR_HEIGHT = SCREEN_HEIGHT // char_height
 
 print(f"Max chars per line: {MAX_CHAR_WIDTH}, lines per screen: {MAX_CHAR_HEIGHT}")
 

@@ -59,7 +59,7 @@ char_height = (bbox[3] - bbox[1]) + 6
 
 # Compute how many fit
 MAX_CHAR_WIDTH = SCREEN_WIDTH // char_width
-MAX_CHAR_HEIGHT = SCREEN_HEIGHT // char_height
+MAX_CHAR_HEIGHT = (SCREEN_HEIGHT // char_height)-1
 
 print(f"Max chars per line: {MAX_CHAR_WIDTH}, lines per screen: {MAX_CHAR_HEIGHT}")
 

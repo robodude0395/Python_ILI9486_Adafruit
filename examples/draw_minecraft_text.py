@@ -54,8 +54,8 @@ font = ImageFont.truetype('monocraft.ttf', 25)
 tmp_img = Image.new("RGB", (100, 100))
 tmp_draw = ImageDraw.Draw(tmp_img)
 bbox = tmp_draw.textbbox((0, 0), "W", font=font)
-char_width = bbox[2] - bbox[0]
-char_height = bbox[3] - bbox[1]
+char_width = (bbox[2] - bbox[0])
+char_height = (bbox[3] - bbox[1]) + 6
 
 # Compute how many fit
 MAX_CHAR_WIDTH = SCREEN_WIDTH // char_width
